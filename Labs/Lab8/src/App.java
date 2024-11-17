@@ -1,12 +1,43 @@
+//Дадена е низа од научни списанија, при што за секоје списание се знае местото кое го зафаќа на полица по широчина и височина. Дополнително, се знае должината на полиците на кои треба да се сместат списанијата. Кога со списанија ќе пополни едно ниво од полиците, се минува на следното ниво полици, при што висината на една полица зависи од највисокото списание поставено на полицата. Да се одреди минималната можна височина на полиците, откако на неа ќе бидат сместени сите списанија од низата.
+
 
 import java.util.ArrayList;
 
 class Spisanija{
     int h, w;
+    public Spisanija(){
+        h = 0;
+        w = 0;
+    }
     public Spisanija(int h, int w){
         this.h = h;
-        this.w = h;
+        this.w = w;
     }
+}
+class Polica{
+    int h, w;
+    final int maxWidth = 10;
+    public Polica(){
+        h = 0;
+        w = 0;
+    }
+    public Polica(int h, int w){
+        this.h = h;
+        this.w = w;
+    }
+    public void setHeight(int h){
+        this.h = h;
+    }
+    public void setWidth(int w){
+        this.w = w;
+    }
+    public int getMaxWidth(){
+        return maxWidth;
+    }
+    public void dodadiSirina(int w){
+        this.w+=w;
+    }
+
 }
 
 public class App {
@@ -26,42 +57,55 @@ public class App {
 
         sort(spis);
 
+        int maximun = najdivisina(spis);
 
-        
-        int currentWidth = 0; 
-        int currentHeight = 0; 
-        int totalHeight = 0;  
-
-        for (Spisanija sp : spis) {
-            if (currentWidth + sp.w <= 10) {
-                currentWidth += sp.w;
-                currentHeight = Math.max(currentHeight, sp.h); 
-            } else {
-                totalHeight += currentHeight;
-                currentWidth = sp.w;
-                currentHeight = sp.h;
-            }
-        }
-
-        
-        totalHeight += currentHeight;
-
-        System.out.println(" Min pol " + totalHeight);
-        
-
-        }
+        System.out.println(maximun);
+    }
         
         private static void sort(ArrayList<Spisanija> spis) {
             for(int i = 0;i<spis.size()-1;i++){
-                Spisanija pom = spis.get(i);
                 for(int j=i+1;j<spis.size();j++){
-                    Spisanija pom1 = spis.get(j);
-                    if(pom1.h>pom.h){
-                        Spisanija pom3 = pom;
-                        pom = pom1;
-                        pom1 = pom3;
+                    if(spis.get(j).h>spis.get(i).h){
+                        Spisanija temp = spis.get(i);
+                        spis.set(i, spis.get(j));
+                        spis.set(j, temp);
                     }
                 }
             }
         }
+
+    private static int najdivisina(ArrayList<Spisanija> spis) {
+        int maxHeight = 0;
+        ArrayList<Polica> polici = new ArrayList<Polica>();
+        for(int i = 0; i< spis.size();i++){
+            Spisanija s = spis.get(i);
+            if(polici.isEmpty()){
+                Polica newPolica = new Polica();
+                newPolica.setHeight(s.h);
+                newPolica.setWidth(s.w);
+                polici.add(newPolica);
+                maxHeight += s.h;
+            }else{
+                int k = 0;
+                for(int j = 0; j<polici.size();j++){
+                    Polica pom = polici.get(j);
+                    if((pom.getMaxWidth() - s.w )>= pom.w){
+                        pom.dodadiSirina(s.w);
+                        k=1;
+                        // break;
+                    }
+                }
+                if(k==0){
+                Polica newPolica = new Polica();
+                newPolica.setHeight(s.h);
+                newPolica.setWidth(s.w);
+                polici.add(newPolica);
+                maxHeight += s.h;
+                }
+            }
+        }
+
+        return maxHeight;
+    }
 }
+
