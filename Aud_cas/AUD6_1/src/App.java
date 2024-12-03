@@ -1,5 +1,7 @@
 //binarno drvo
 
+import java.util.Stack;
+
 class BNode<E>{
     public E info;
     public BNode<E> left,right;
@@ -75,6 +77,55 @@ class BTree<E>{
             System.out.println(r.info);
         }
     }
+
+    public void inorderUsingStack(BNode<E> r){
+        Stack<BNode<E>> s = new Stack();
+        
+        BNode<E> p = root;
+
+        while (true) { 
+            while(p!=null){
+                s.push(p);
+                p = p.left;
+            }
+
+            if(s.isEmpty()){
+                break;
+            }
+
+            p = s.pop();
+
+            System.out.println(p.info.toString());
+
+            p = p.right;
+
+
+        }
+    }
+
+    public int numLeaves(BNode<E> r){
+        if(r == null){
+            return 0;
+        }
+        if(r.left == null && r.right==null){
+            return 1;
+        }
+        else{
+            return numLeaves(r.left) + numLeaves(r.right);
+        }
+    }
+
+    public int insideNodes(BNode<E> r){
+        if(r == null){
+            return 0;
+        }
+        if(r.left == null && r.right==null){
+            return 0;
+        }
+        else{
+            return 1 + insideNodes(r.left) + insideNodes(r.right);
+        }
+    }
 }
 
 public class App {
@@ -91,5 +142,9 @@ public class App {
         drvo.preorder(drvo.root);
         System.out.println("");
         drvo.postorder(drvo.root);
+        System.out.println("");
+        drvo.inorderUsingStack(drvo.root);
+        System.out.println("");
+        System.err.println(drvo.numLeaves(drvo.root));
     }
 }
