@@ -1,5 +1,6 @@
 
 
+import java.util.LinkedList;
 import java.util.Scanner;
 
 
@@ -146,5 +147,57 @@ public class App {
         SLLHT<Integer, ChessGame> chessGamesHased = new SLLHT<Integer, ChessGame>(5);
         
         chessGamesHased.insert(f(chessGames[0].gameID,chessGames[0].datetime), chessGames[0]);
+        chessGamesHased.insert(f(chessGames[1].gameID,chessGames[1].datetime), chessGames[1]); 
+        chessGamesHased.insert(f(chessGames[2].gameID,chessGames[2].datetime), chessGames[2]);
+        chessGamesHased.insert(f(chessGames[3].gameID,chessGames[3].datetime), chessGames[3]);
+        chessGamesHased.insert(f(chessGames[4].gameID,chessGames[4].datetime), chessGames[4]);
+        chessGamesHased.insert(f(chessGames[5].gameID,chessGames[5].datetime), chessGames[5]);
+        chessGamesHased.insert(f(chessGames[6].gameID,chessGames[6].datetime), chessGames[6]);
+        chessGamesHased.insert(f(chessGames[7].gameID,chessGames[7].datetime), chessGames[7]);
+        chessGamesHased.insert(f(chessGames[8].gameID,chessGames[8].datetime), chessGames[8]);
+        chessGamesHased.insert(f(chessGames[9].gameID,chessGames[9].datetime), chessGames[9]);
+
+        Scanner input = new Scanner(System.in);
+        String datetime = input.next();
+        Integer player = input.nextInt();
+
+        if(datetime.compareTo("22/05/2023")>0 && datetime.compareTo("26/05/2023")<0){
+            SLLNode<Map<Integer, ChessPlayer>> returned_player = chessPlayersHased.find(player);
+            if(returned_player!=null){
+                System.out.println("Both are valid");
+                LinkedList returned_games = findALL(chessGamesHased,datetime,player);
+
+                for (int i = 0; i<returned_games.size();i++) {
+                    System.out.println(returned_games.get(i));
+                }
+            }else{
+                System.out.println("Player not valid");
+            }
+        }else{
+            System.out.println("Date not valid");
+        }
+    }
+
+    private static LinkedList findALL(SLLHT<Integer,ChessGame> chessGamesHashed, String datetime, Integer player){
+        LinkedList<ChessGame> allGames = new LinkedList<ChessGame>();
+        for(int i=0;i<20;i++){
+            int look = f(i+1,datetime);
+
+            SLLNode<Map<Integer, ChessGame>> node = chessGamesHashed.find(look);
+
+            if(node !=null){
+                if(node.info.value.player_1.rank == player.intValue() || node.info.value.player_2.rank == player.intValue()){
+                    allGames.add(node.info.value);
+                }
+            }
+        }
+        return allGames;
+    }
+
+    private static int f(Integer gamID, String datetime){
+        int day = Integer.parseInt(datetime.split(" ")[0].split("/")[0])-22;
+
+        return 20*day+gamID;
+        
     }
 }
