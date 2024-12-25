@@ -1,6 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 class GNode<E>{
     public int num;
@@ -110,34 +110,50 @@ class Graph<E> {
         }
 
     }
-}
+    
+        public void findPath(int[] visited, int source, int destination, ArrayList<Integer> path) {
+            visited[source] = 1;
+            path.add(source);
 
+            GNode<E> pom = graph[source];
+            GNode<E> next;
 
-public class App {
-    public static void main(String[] args) throws Exception {
-        Scanner input = new Scanner(System.in);
+            for(int i=0;i<pom.list.size(); i++){
+                next = pom.list.get(i);
 
-        int n = input.nextInt();
-
-        input.nextLine();
-
-        String[] data = input.nextLine().split(" ");
-
-        Graph<String> graph = new Graph(n, data);
-
-        graph.addEdge(0, 1);
-        graph.addEdge(3, 4);
-        graph.addEdge(2, 4);
-        graph.addEdge(1, 2);
-        graph.addEdge(1, 5);
-        graph.addEdge(0, 3);
-
-        int [] visited = new int[n];
-
-        for(int i=0;i<n;i++){
-            visited[i] = 0;
+                if(visited[next.num]==0){
+                    if(next.num != destination){
+                        //pridvizi napred
+                        findPath(visited, next.num, destination, path);
+                        path.remove(path.size()-1);
+                    }else{
+                        path.add(destination);
+                        System.out.println(path);
+                        path.remove(path.size()-1);
+                    }
+                }
+            }
+            visited[source] = 0;
         }
-        graph.dfs(visited, 0);
-        System.out.println(Arrays.toString(visited));
+    }
+    
+    
+    public class App {
+        public static void main(String[] args) throws Exception {
+            String[] names = {"N1","N2","N3","N4"};
+    
+            Graph graph = new Graph(4, names);
+            graph.addEdge(0, 1);
+            graph.addEdge(0, 2);
+            graph.addEdge(0, 3);
+            graph.addEdge(2, 0);
+            graph.addEdge(2, 1);
+            graph.addEdge(1, 3);
+    
+            int[] visited = new int[graph.n];
+            Arrays.fill(visited,0);
+    
+            ArrayList<Integer> path = new ArrayList<>();
+            graph.findPath(visited,2,3,path);
     }
 }

@@ -1,5 +1,4 @@
 import java.util.Arrays;
-import java.util.Scanner;
 
 class GraphInfo<E extends Comparable<E>> {
     E info;
@@ -128,40 +127,50 @@ class Graph<E extends Comparable<E>>{
             }
         }
     }
-}
+    
+        public boolean  detectIfCycleExists(int[] visited, int start, int parent) {
+            visited[start] = 1;
+            System.out.println(infos[start].info);
 
-public class App {
-
-    public static void main(String[] args) throws Exception {
-        Scanner input  = new Scanner(System.in);
-
-        int n = input.nextInt();
-        input.nextLine();
-
-        Graph<String> graph = new Graph(n);
-
-        String [] data = input.nextLine().split(" ");
-
-        for(int i=0;i<n;i++){
-            graph.setInfo(i, data[i]);
+            for(int i=0;i<n;i++){
+                if(mtx[start][i]>0){
+                    if(visited[i]==0){
+                        if(detectIfCycleExists(visited, i, start)){
+                            return true;
+                        }
+                    }else if(visited[i] == 1 && parent != i){
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
+    }
+    
+    public class App {
+    
+        public static void main(String[] args) throws Exception {
+            int num_nodes = 5;
+            Graph<String> graph = new Graph(num_nodes);
+    
+            for(int i=0;i<num_nodes;i++){
+                graph.setInfo(i, "N"+i);
+            }
 
-        int edge_count = input.nextInt();
-        input.nextLine();
+            /*graph.addEdge(1, 2);
+            graph.addEdge(2, 4);
+            graph.addEdge(0, 1);
+            graph.addEdge(1, 4);*/
 
-        for(int i=0;i<edge_count;i++){
-            graph.addEdge(input.nextInt(), input.nextInt());
-        }
-
-        graph.printMtx();
-
-        int [] visited = new int[n];
-
-        for(int i=0;i<n;i++){
-            visited[i] = 0;
-        }
-
-        System.out.println(Arrays.toString(visited));
-
+            graph.addEdge(0, 1);
+            graph.addEdge(1, 2);
+            graph.addEdge(1, 3);
+            graph.addEdge(0, 4);
+            graph.addEdge(1, 4);
+    
+            int[] visited = new int[num_nodes];
+            Arrays.fill(visited,0);
+    
+            System.out.println(graph.detectIfCycleExists(visited,0,-1));
     }
 }
