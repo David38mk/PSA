@@ -1,4 +1,4 @@
-import java.util.Arrays;
+import java.util.Scanner;
 
 class GraphInfo<E extends Comparable<E>> {
     E info;
@@ -127,29 +127,38 @@ class Graph<E extends Comparable<E>>{
             }
         }
     }
-    
-    public boolean  detectIfCycleExists(int[] visited, int start, int parent) {
-            visited[start] = 1;
-            System.out.println(infos[start].info);
 
-            for(int i=0;i<n;i++){
-                if(mtx[start][i]>0){
-                    if(visited[i]==0){
-                        if(detectIfCycleExists(visited, i, start)){
-                            return true;
-                        }
-                    }else if(visited[i] == 1 && parent != i){
-                        return true;
-                    }
-                }
+    public int getN(){
+        return n;
+    }
+    
+    public int detectIfCycleExistsN(int[] visited, int current, int start, int depth, int N) {
+        if (depth == N) {
+            return (current == start) ? 1 : 0;
         }
-        return false;
+    
+        visited[current] = 1;
+        int count = 0;
+    
+        for (int i = 0; i < n; i++) {
+            if (mtx[current][i] > 0) {
+                if (i == start && depth == N - 1) {
+                    count++;
+                } else if (visited[i] == 0) {
+                    count += detectIfCycleExistsN(visited, i, start, depth + 1, N);
+                }
+            }
+        }
+        visited[current] = 0;
+        return count;
     }
 }
     
     public class App {
     
         public static void main(String[] args) throws Exception {
+            Scanner s = new Scanner(System.in);
+            int N = s.nextInt();
             int num_nodes = 5;
             Graph<String> graph = new Graph(num_nodes);
     
@@ -157,20 +166,22 @@ class Graph<E extends Comparable<E>>{
                 graph.setInfo(i, "N"+i);
             }
 
-            /*graph.addEdge(1, 2);
-            graph.addEdge(2, 4);
-            graph.addEdge(0, 1);
-            graph.addEdge(1, 4);*/
-
-            graph.addEdge(0, 1);
-            graph.addEdge(1, 2);
-            graph.addEdge(1, 3);
             graph.addEdge(0, 4);
-            graph.addEdge(1, 4);
-    
-            int[] visited = new int[num_nodes];
-            Arrays.fill(visited,0);
-    
-            System.out.println(graph.detectIfCycleExists(visited,0,-1));
+            graph.addEdge(0, 1);
+            graph.addEdge(0, 3);
+            graph.addEdge(1, 3);
+            graph.addEdge(1, 2);
+            graph.addEdge(2, 3);
+
+            proveriBrojNaPatekiN(graph,N);
+    }
+
+    private static void proveriBrojNaPatekiN(Graph<String> graph, int N){
+            int count = 0;
+            int [] visited = new int[graph.getN()];
+            for(int i=0;i<graph.getN();i++){
+                count += graph.detectIfCycleExistsN(visited, i, i,0, N);
+            }
+            System.out.println(count);
     }
 }
